@@ -35,11 +35,24 @@ jobs:
 
             - name: Install MS Edge WebDriver
               run: |
-                  EDGE_VERSION=$(microsoft-edge --version | cut -d ' ' -f 3)
+                  EDGE_VERSION=$(microsoft-edge --version | cut -d ' ' -f 3 | tr -cd '0-9.')
                   echo "Edge version: $EDGE_VERSION"
-                  DRIVER_VERSION=$(curl -s "https://msedgedriver.azureedge.net/LATEST_STABLE")
-                  echo "Installing EdgeDriver version: $DRIVER_VERSION"
-                  curl -Lo msedgedriver.zip "https://msedgedriver.azureedge.net/${DRIVER_VERSION}/edgedriver_linux64.zip"
+
+                  # Get the clean driver version that matches Edge
+                  DRIVER_VERSION=$(curl -s "https://msedgedriver.azureedge.net/LATEST_RELEASE_${EDGE_VERSION%%.*}")
+                  echo "Driver version from release: $DRIVER_VERSION"
+
+                  # Make sure we have a valid version number
+                  if [[ ! "$DRIVER_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    echo "Using latest stable driver instead"
+                    DRIVER_VERSION=$(curl -s "https://msedgedriver.azureedge.net/LATEST_STABLE" | tr -cd '0-9.')
+                  fi
+
+                  echo "Final driver version: $DRIVER_VERSION"
+                  DOWNLOAD_URL="https://msedgedriver.azureedge.net/${DRIVER_VERSION}/edgedriver_linux64.zip"
+                  echo "Download URL: $DOWNLOAD_URL"
+
+                  curl -Lo msedgedriver.zip "$DOWNLOAD_URL"
                   unzip msedgedriver.zip -d ./driver
                   chmod +x ./driver/msedgedriver
                   echo "./driver" >> $GITHUB_PATH
