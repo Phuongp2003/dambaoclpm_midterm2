@@ -1,0 +1,66 @@
+name: Selenium Tests
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Start test website
+              run: npm run start-test-site &
+
+            - name: Wait for server to start
+              run: sleep 5
+
+            - name: Set up Microsoft Edge
+              uses: browser-actions/setup-edge@latest
+              with:
+                  edge-version: stable
+
+            - name: Install MS Edge WebDriver
+              run: |
+                  EDGE_VERSION=$(microsoft-edge --version | cut -d ' ' -f 3)
+                  echo "Edge version: $EDGE_VERSION"
+                  DRIVER_VERSION=$(curl -s "https://msedgedriver.azureedge.net/LATEST_STABLE")
+                  echo "Installing EdgeDriver version: $DRIVER_VERSION"
+                  curl -Lo msedgedriver.zip "https://msedgedriver.azureedge.net/${DRIVER_VERSION}/edgedriver_linux64.zip"
+                  unzip msedgedriver.zip -d ./driver
+                  chmod +x ./driver/msedgedriver
+                  echo "./driver" >> $GITHUB_PATH
+
+            - name: Run Selenium tests
+              run: xvfb-run --auto-servernum npm test
+              env:
+                  SELENIUM_BROWSER: edge
+
+            - name: Upload test results
+              uses: actions/upload-artifact@v3
+              if: always()
+              with:
+                  name: test-results
+                  path: reports/
+
+            - name: Upload test logs
+              uses: actions/upload-artifact@v3
+              if: failure()
+              with:
+                  name: test-logs
+                  path: |
+                      ./logs
+                      ./screenshots

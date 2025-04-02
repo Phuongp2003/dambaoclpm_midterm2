@@ -1,0 +1,14 @@
+# HƯỚNG DẪN CHẠY TESTS NGẮN GỌN
+
+## Cài đặt
+- Yêu cầu: Node.js v16+, Microsoft Edge/Chrome
+- Cài đặt dependencies: npm install
+
+## Chạy tests
+1. Khởi động test website: npm run start-test-site
+2. Chạy tests với Cucumber: npm test
+3. Chạy tests đơn giản: npm run test:simple
+
+## Lựa chọn trình duyệt
+- Mặc định: Microsoft Edge
+- Để sử dụng Chrome: Thay đổi cấu hình như mô tả trong README.MD

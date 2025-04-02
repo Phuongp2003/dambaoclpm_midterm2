@@ -1,0 +1,22 @@
+{
+  "name": "selenium-tests",
+  "version": "1.0.0",
+  "description": "Selenium tests with Cucumber and NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js",
+    "test:simple": "node test.js",
+    "lint": "eslint .",
+    "start-test-site": "node test-site/server.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.8.1",
+    "@cucumber/cucumber": "^11.2.0",
+    "chai": "^4.3.7",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "chromedriver": "^114.0.0"
+  }
+}
