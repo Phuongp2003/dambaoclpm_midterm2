@@ -17,6 +17,6 @@
   },
   "devDependencies": {
     "eslint": "^8.34.0",
-    "chromedriver": "^114.0.0"
+    "chromedriver": "^119.0.1"
   }
 }
